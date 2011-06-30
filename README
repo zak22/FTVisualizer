@@ -1,1 +1,18 @@
-FTVisualizer!
+FTVisualizer is a tool that visualizes family trees. Since a lot of tools out there 
+deal with static visualization of family trees (e.g. graphs), our project will focus 
+on building animated visualization based on dates (birthday dates, wedding dates, 
+death dates,... etc). This will give a demonstration of how a family grew over a time 
+period.
+
+Due to time limitations, we've put the UI which gathers the family data as a second 
+priority for now. We will focus our work on the visualization tool and assume that the
+family data is stored in a file with a specific format (in the future, the UI should 
+create this file through user input and interactions). We are aiming to build this 
+tool using OpenGL and C++.
+
+
+
+Current Team Members:
+-Zakaria Almatar (Zak22)
+-Husain Al-Matar
+-Osamh Hamali
