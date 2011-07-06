@@ -1,0 +1,7 @@
+Project plan,
+
+1.event 1 -> parse -> openGl. (Due date Sun, 07/10/2011).
+2.event 2 -> parse -> openGL. (Due date Sun, 07/17/2011).
+3.event 3 -> parse ->openGL. (Due date Sun, 07/24/2011).
+4.event 4-> parse -> openGL. (Due date Sun, 07/31/2011).
+5.compain all event -> parse -> openGL. (Due date Fri, 08/05/2011).	
