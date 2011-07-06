@@ -1,0 +1,36 @@
+Project Design,
+
+•	Event folder.
+Event Type:
+1.	Birth.
+2.	Death.
+3.	Wedding.
+4.	Divorce.
+Folder element:	  
+D: date.
+N: name.
+G: gender.
+P1: Father.
+P2: Mother.
+P: Partner.
+
+Folder Structure: 
+[D,1,N,G,P1,P2]          //Birth.
+[D,2,N]                  //Death.
+[D,3,N,P]                //Wedding.
+[D,4,N,P]                //Divorce.
+
+
+•	Parser the event folder.
+parse the Event folder.
+
+•	Create an event while parsing in the opengGL window.
+
+Male: Blue color.
+Female: Pink color.  
+Edge: represent a Relation.
+
+event 1. Create a box that contain D,N,G, and connect this box to P1&P2.
+event 2. Delete a box that contain N.
+event 3. Create edge between N & P.
+event 4. Delete edge between N & P.
