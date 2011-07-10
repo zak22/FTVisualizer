@@ -13,14 +13,16 @@ int windowWidth  = 640;   // Window's width
 int windowHeight = 480;   // Window's height
 int windowPosX   = 50;    // Window's top-left corner x
 int windowPosY   = 50;    // Window's top-left corner y
+float blue[]={0,0,153}, pink[]={204,0,153}, white[]={1,1,1};
 
 
-void rectangle(float xLeft, float xRight, float yBottom, float yTop);
+
+void rectangle(float xLeft, float xRight, float yBottom, float yTop, float *color);
 
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	rectangle(-1,1,-0.5,0.5);
+	rectangle(-1,1,-0.5,0.5, white);
 
 	glFlush();
     glutPostRedisplay();
@@ -34,9 +36,9 @@ void init()
 }
 
 
-void rectangle(float xLeft,float xRight,float yBottom,float yTop)
+void rectangle(float xLeft,float xRight,float yBottom,float yTop, float *color)
 {
-    glColor3f(0,0,1);
+    glColor3f(color[0],color[1],color[2]);
 
 	glBegin(GL_LINES);
 
