@@ -1,4 +1,4 @@
-Project Design,
+ Project Design,
 
 •	Event folder.
 Event Type:
