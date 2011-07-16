@@ -5,7 +5,9 @@
 #include <GL/glut.h>
 #include <GL/glu.h>
 #include <GL/gl.h>
-      
+#include <Windows.h>
+#include <math.h>
+
 using namespace std;
 
 //window
@@ -13,11 +15,23 @@ int windowWidth  = 640;   // Window's width
 int windowHeight = 480;   // Window's height
 int windowPosX   = 50;    // Window's top-left corner x
 int windowPosY   = 50;    // Window's top-left corner y
-float blue[]={0,0,153}, pink[]={204,0,153}, white[]={1,1,1};
 
+//colors
+float blue[]={0,0,153}; 
+float pink[]={204,0,153};
+float white[]={1,1,1};
 
+//corners
+const int topL = 0;
+const int topR = 1;
+const int bottomR = 2;
+const int bottomL = 3;
 
-void rectangle(float xLeft, float xRight, float yBottom, float yTop,float width, float *color);
+int animate = 1;
+
+//functions
+void rectangle(float xLeft, float xRight, float yBottom, float yTop,float width, float *color, float sleep);
+void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);
 void display();
 void init();
 
@@ -40,8 +54,8 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	rectangle(-3,-1,-0.5,0.5,0.1, pink);
-	rectangle(1,3,-0.5,0.5,0.1, blue);
+	rectangle(-3,-1,-0.5,0.5,0.1, pink, 10000);
+	//rectangle(1,3,-0.5,0.5,0.1, blue, 3000);
 	
 	glFlush();
     glutPostRedisplay();
@@ -55,9 +69,15 @@ void init()
 }
 
 
-void rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color)
+void rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep)
 {
-    glColor3f(color[0],color[1],color[2]);
+    if(animate)
+	{
+		animeRec(xLeft, xRight, yBottom, yTop, width, color, sleep);
+		return;
+	}
+
+	glColor3f(color[0],color[1],color[2]);
 
 	glBegin(GL_QUADS);
 
@@ -88,5 +108,95 @@ void rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, fl
 }
 
 
+void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep)
+{
+	float val = 0.01;
+	float perimeter = ((xRight - xLeft)) + ((yTop - yBottom));
+	int slp = (int) floor(sleep/(perimeter/val));
 
+
+
+	//Bottom Bar
+	float tmpL = (((xRight - xLeft)/2) + xLeft) - val;
+	float tmpR = (((xRight - xLeft)/2) + xLeft) + val;
+	while(1)
+	{
+		glColor3f(color[0],color[1],color[2]);
+
+		glBegin(GL_QUADS);
+		glVertex2f(tmpL,yBottom);
+		glVertex2f(tmpL,yBottom-width);
+		glVertex2f(tmpR,yBottom-width);
+		glVertex2f(tmpR,yBottom);
+		glEnd();
+
+		glFlush();
+		glutPostRedisplay();
+		tmpL -= val;
+		tmpR += val;
+		if(tmpL < xLeft)
+			break;
+		Sleep(slp);
+	}
+
+
+	//left and right bars
+	float tmpT = yBottom + val;
+	while(1)
+	{
+		glColor3f(color[0],color[1],color[2]);
+
+		glBegin(GL_QUADS);
+		//Left Bar
+		glVertex2f(xLeft,tmpT);
+		glVertex2f(xLeft-width,tmpT);
+		glVertex2f(xLeft-width,yBottom);
+		glVertex2f(xLeft,yBottom);
+		//Right Bar
+		glVertex2f(xRight,tmpT);
+		glVertex2f(xRight+width,tmpT);
+		glVertex2f(xRight+width,yBottom);
+		glVertex2f(xRight,yBottom);
+		glEnd();
+
+		glFlush();
+		glutPostRedisplay();
+		tmpT += val;
+		if(tmpT > yTop)
+			break;
+		Sleep(slp);
+	}
+
+	//Top Bar
+	tmpL = xLeft + val;
+	tmpR = xRight - val;
+	while(1)
+	{
+		glColor3f(color[0],color[1],color[2]);
+
+		glBegin(GL_QUADS);		
+		//Top Bar (Left)
+		glVertex2f(xLeft,yTop);
+		glVertex2f(xLeft,yTop+width);
+		glVertex2f(tmpL,yTop+width);
+		glVertex2f(tmpL,yTop);
+		//Top Bar (Right)
+		glVertex2f(tmpR,yTop);
+		glVertex2f(tmpR,yTop+width);
+		glVertex2f(xRight,yTop+width);
+		glVertex2f(xRight,yTop);		
+		glEnd();
+
+		glFlush();
+		glutPostRedisplay();
+		tmpL += val;
+		tmpR -= val;
+		if(tmpL >= tmpR)
+			break;
+		Sleep(slp);
+	}
+
+	animate = 0;
+    //glEnd();
+}
 
