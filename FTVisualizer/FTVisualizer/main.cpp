@@ -1,3 +1,5 @@
+//Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
+
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <iostream>
 #include <stdlib.h>
