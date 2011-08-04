@@ -29,53 +29,42 @@ const int topR = 1;
 const int bottomR = 2;
 const int bottomL = 3;
 
-int animate = 1;
-
-//functions
-void rectangle(float xLeft, float xRight, float yBottom, float yTop,float width, float *color, float sleep);
-void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);
-void display();
-void init();
+//rectangles
 
 
-void main(int argc, char ** argv)
-{
-	glutInit(&argc, argv);
-	glutInitWindowSize(windowWidth,windowHeight);
-	glutInitWindowPosition(windowPosX,windowPosY);
-	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-	glutCreateWindow("FTVisualizer");
-	init();
-	glutDisplayFunc(display);
-    glutMainLoop();
+class rectangle{
+	public:
+        rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);                        //constructor
+	    void display();                  //display rectangle
+	private:
+		bool animate;
+		float xLeft;
+		float xRight;
+		float yBottom;
+		float yTop;
+		float width;
+		float *color;
+		float sleep;
+		void animeRec();
+};
+
+
+rectangle::rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep){
+	this->animate = true;
+	this->xLeft = xLeft;
+	this->xRight = xRight;
+	this->yBottom = yBottom;
+	this->yTop = yTop;
+	this->width = width;
+	this->color = color;
+	this->sleep = sleep;
 }
 
 
-
-void display()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	rectangle(-3,-1,-0.5,0.5,0.1, pink, 10000);
-	//rectangle(1,3,-0.5,0.5,0.1, blue, 3000);
-	
-	glFlush();
-    glutPostRedisplay();
-}
-
-
-void init()
-{
-	glClearColor(0,0,0,0);
-	gluOrtho2D(-5,5,-5,5);
-}
-
-
-void rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep)
-{
+void rectangle::display(){
     if(animate)
 	{
-		animeRec(xLeft, xRight, yBottom, yTop, width, color, sleep);
+		animeRec();
 		return;
 	}
 
@@ -107,16 +96,16 @@ void rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, fl
 	glVertex2f(xRight,yBottom);
 
     glEnd();
+
 }
 
 
-void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep)
+
+void rectangle::animeRec()
 {
 	float val = 0.01;
 	float perimeter = ((xRight - xLeft)) + ((yTop - yBottom));
 	int slp = (int) floor(sleep/(perimeter/val));
-
-
 
 	//Bottom Bar
 	float tmpL = (((xRight - xLeft)/2) + xLeft) - val;
@@ -201,4 +190,52 @@ void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, flo
 	animate = 0;
     //glEnd();
 }
+
+
+//int animate = 1;
+
+//functions
+//void rectangle(float xLeft, float xRight, float yBottom, float yTop,float width, float *color, float sleep);
+//void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);
+void display();
+void init();
+
+rectangle r1 = rectangle(-3,-1,-0.5,0.5,0.1, pink, 1000);
+
+
+
+
+
+void main(int argc, char ** argv)
+{
+	glutInit(&argc, argv);
+	glutInitWindowSize(windowWidth,windowHeight);
+	glutInitWindowPosition(windowPosX,windowPosY);
+	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
+	glutCreateWindow("FTVisualizer");
+	init();
+	glutDisplayFunc(display);
+    glutMainLoop();
+}
+
+
+
+void display()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	r1.display();
+	
+	glFlush();
+    glutPostRedisplay();
+}
+
+
+void init()
+{
+	glClearColor(0,0,0,0);
+	gluOrtho2D(-5,5,-5,5);
+}
+
+
 
