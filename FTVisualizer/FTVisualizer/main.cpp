@@ -29,6 +29,8 @@ const int topR = 1;
 const int bottomR = 2;
 const int bottomL = 3;
 
+void glutDrawText(void *font, char *text, float xPos, float yPos);
+
 //rectangles
 
 
@@ -87,36 +89,27 @@ void rectangle::display(){
 
     
 	glVertex2i(xLeft,yTop);
-	glVertex2i(xLeft,yTop+width);
-	glVertex2i(xRight,yTop+width);
+	glVertex2i(xLeft,yTop-width);
+	glVertex2i(xRight,yTop-width);
 	glVertex2i(xRight,yTop);
 
 
 	glVertex2i(xLeft,yBottom);
-    glVertex2i(xLeft,yBottom-width);
-	glVertex2i(xRight,yBottom-width);
+    glVertex2i(xLeft,yBottom+width);
+	glVertex2i(xRight,yBottom+width);
 	glVertex2i(xRight,yBottom);
-
-
-	//glRasterPos2i(100, 120);
-	//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, "text to render");
 
     glEnd();
 
+	glutDrawText(GLUT_BITMAP_HELVETICA_18, "text", 80, 80);
 }
 
-void glutDrawString(void *font, char *string, float xPos, float yPos)
+void glutDrawText(void *font, char *text, float xPos, float yPos)
 {
-	int len = strlen(string);
-	float x = xPos;
-	float y = yPos;
-	float width = 1;
-
-	for(int i=0;i<len;++i){
-		glRasterPos2d(x, y);
-		glutBitmapCharacter(font, string[i]);
-		x += width;
+	glRasterPos2i(xPos, yPos);
+	while(*text){
+		glutBitmapCharacter(font, *text);
+		text++;
 	}
 }
 
@@ -182,11 +175,13 @@ void rectangle::animeRec()
 		glColor3f(color[0],color[1],color[2]);
 
 		glBegin(GL_QUADS);		
+		
 		//Top Bar (Left)
 		glVertex2i(xLeft,yTop);
 		glVertex2i(xLeft,yTop-width);
 		glVertex2i(tmpL,yTop-width);
 		glVertex2i(tmpL,yTop);
+		
 		//Top Bar (Right)
 		glVertex2i(tmpR,yTop);
 		glVertex2i(tmpR,yTop-width);
@@ -217,8 +212,6 @@ void init();
 rectangle r1 = rectangle(50,200,50,100,5, pink, 1000);
 
 
-
-
 void main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
@@ -238,6 +231,21 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	r1.display();
+
+	//glColor3f(pink[0],pink[1],pink[2]);
+	//glBegin(GL_QUADS);		
+	//glVertex2i(50,50);
+	//glVertex2i(100,50);
+	//glVertex2i(100,100);
+	//glVertex2i(50,100);
+	//glEnd();
+
+	//glColor3f(pink[0],pink[1],pink[2]);
+	//glRasterPos2i(100, 100);
+	//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 'a');
+
+	
+	glFlush();
     glutPostRedisplay();
 }
 
