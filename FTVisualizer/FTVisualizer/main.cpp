@@ -34,7 +34,7 @@ const int bottomL = 3;
 
 class rectangle{
 	public:
-        rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);                        //constructor
+        rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep);                        //constructor
 	    void display();                  //display rectangle
 	private:
 		bool animate;
@@ -45,11 +45,12 @@ class rectangle{
 		float width;
 		float *color;
 		float sleep;
+		char *name;
 		void animeRec();
 };
 
 
-rectangle::rectangle(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep){
+rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep){
 	this->animate = true;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -58,6 +59,7 @@ rectangle::rectangle(float xLeft,float xRight,float yBottom,float yTop,float wid
 	this->width = width;
 	this->color = color;
 	this->sleep = sleep;
+	this->name = name;
 }
 
 
@@ -72,118 +74,130 @@ void rectangle::display(){
 
 	glBegin(GL_QUADS);
 
-	glVertex2f(xLeft,yTop);
-	glVertex2f(xLeft-width,yTop);
-	glVertex2f(xLeft-width,yBottom);
-	glVertex2f(xLeft,yBottom);
+	glVertex2i(xLeft,yTop);
+	glVertex2i(xLeft-width,yTop);
+	glVertex2i(xLeft-width,yBottom);
+	glVertex2i(xLeft,yBottom);
 
 
-	glVertex2f(xRight,yTop);
-	glVertex2f(xRight+width,yTop);
-	glVertex2f(xRight+width,yBottom);
-	glVertex2f(xRight,yBottom);
+	glVertex2i(xRight,yTop);
+	glVertex2i(xRight+width,yTop);
+	glVertex2i(xRight+width,yBottom);
+	glVertex2i(xRight,yBottom);
 
     
-	glVertex2f(xLeft,yTop);
-	glVertex2f(xLeft,yTop+width);
-	glVertex2f(xRight,yTop+width);
-	glVertex2f(xRight,yTop);
+	glVertex2i(xLeft,yTop);
+	glVertex2i(xLeft,yTop+width);
+	glVertex2i(xRight,yTop+width);
+	glVertex2i(xRight,yTop);
 
 
-	glVertex2f(xLeft,yBottom);
-    glVertex2f(xLeft,yBottom-width);
-	glVertex2f(xRight,yBottom-width);
-	glVertex2f(xRight,yBottom);
+	glVertex2i(xLeft,yBottom);
+    glVertex2i(xLeft,yBottom-width);
+	glVertex2i(xRight,yBottom-width);
+	glVertex2i(xRight,yBottom);
+
+
+	//glRasterPos2i(100, 120);
+	//glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+	//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, "text to render");
 
     glEnd();
 
 }
 
+void glutDrawString(void *font, char *string, float xPos, float yPos)
+{
+	int len = strlen(string);
+	float x = xPos;
+	float y = yPos;
+	float width = 1;
+
+	for(int i=0;i<len;++i){
+		glRasterPos2d(x, y);
+		glutBitmapCharacter(font, string[i]);
+		x += width;
+	}
+}
 
 
 void rectangle::animeRec()
 {
-	float val = 0.01;
-	float perimeter = ((xRight - xLeft)) + ((yTop - yBottom));
+	float val = 1;
+	float perimeter = ((xRight - xLeft)) + ((yBottom - yTop));
 	int slp = (int) floor(sleep/(perimeter/val));
 
 	//Bottom Bar
 	float tmpL = (((xRight - xLeft)/2) + xLeft) - val;
 	float tmpR = (((xRight - xLeft)/2) + xLeft) + val;
-	while(1)
+	while(tmpL >= xLeft)
 	{
 		glColor3f(color[0],color[1],color[2]);
 
 		glBegin(GL_QUADS);
-		glVertex2f(tmpL,yBottom);
-		glVertex2f(tmpL,yBottom-width);
-		glVertex2f(tmpR,yBottom-width);
-		glVertex2f(tmpR,yBottom);
+		glVertex2i(tmpL,yBottom);
+		glVertex2i(tmpL,yBottom+width);
+		glVertex2i(tmpR,yBottom+width);
+		glVertex2i(tmpR,yBottom);
 		glEnd();
 
 		glFlush();
 		glutPostRedisplay();
 		tmpL -= val;
 		tmpR += val;
-		if(tmpL < xLeft)
-			break;
 		Sleep(slp);
 	}
 
 
 	//left and right bars
-	float tmpT = yBottom + val;
-	while(1)
+	float tmpT = yBottom - val;
+	while(tmpT >= yTop)
 	{
 		glColor3f(color[0],color[1],color[2]);
 
 		glBegin(GL_QUADS);
 		//Left Bar
-		glVertex2f(xLeft,tmpT);
-		glVertex2f(xLeft-width,tmpT);
-		glVertex2f(xLeft-width,yBottom);
-		glVertex2f(xLeft,yBottom);
+		glVertex2i(xLeft,tmpT);
+		glVertex2i(xLeft-width,tmpT);
+		glVertex2i(xLeft-width,yBottom);
+		glVertex2i(xLeft,yBottom);
 		//Right Bar
-		glVertex2f(xRight,tmpT);
-		glVertex2f(xRight+width,tmpT);
-		glVertex2f(xRight+width,yBottom);
-		glVertex2f(xRight,yBottom);
+		glVertex2i(xRight,tmpT);
+		glVertex2i(xRight+width,tmpT);
+		glVertex2i(xRight+width,yBottom);
+		glVertex2i(xRight,yBottom);
 		glEnd();
 
 		glFlush();
 		glutPostRedisplay();
-		tmpT += val;
-		if(tmpT > yTop)
-			break;
+		tmpT -= val;
 		Sleep(slp);
 	}
 
 	//Top Bar
 	tmpL = xLeft + val;
 	tmpR = xRight - val;
-	while(1)
+	while(tmpL <= tmpR)
 	{
 		glColor3f(color[0],color[1],color[2]);
 
 		glBegin(GL_QUADS);		
 		//Top Bar (Left)
-		glVertex2f(xLeft,yTop);
-		glVertex2f(xLeft,yTop+width);
-		glVertex2f(tmpL,yTop+width);
-		glVertex2f(tmpL,yTop);
+		glVertex2i(xLeft,yTop);
+		glVertex2i(xLeft,yTop-width);
+		glVertex2i(tmpL,yTop-width);
+		glVertex2i(tmpL,yTop);
 		//Top Bar (Right)
-		glVertex2f(tmpR,yTop);
-		glVertex2f(tmpR,yTop+width);
-		glVertex2f(xRight,yTop+width);
-		glVertex2f(xRight,yTop);		
+		glVertex2i(tmpR,yTop);
+		glVertex2i(tmpR,yTop-width);
+		glVertex2i(xRight,yTop-width);
+		glVertex2i(xRight,yTop);		
 		glEnd();
 
 		glFlush();
 		glutPostRedisplay();
 		tmpL += val;
 		tmpR -= val;
-		if(tmpL >= tmpR)
-			break;
 		Sleep(slp);
 	}
 
@@ -200,8 +214,7 @@ void rectangle::animeRec()
 void display();
 void init();
 
-rectangle r1 = rectangle(-3,-1,-0.5,0.5,0.1, pink, 1000);
-
+rectangle r1 = rectangle(50,200,50,100,5, pink, 1000);
 
 
 
@@ -225,8 +238,6 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	r1.display();
-	
-	glFlush();
     glutPostRedisplay();
 }
 
@@ -234,7 +245,7 @@ void display()
 void init()
 {
 	glClearColor(0,0,0,0);
-	gluOrtho2D(-5,5,-5,5);
+	gluOrtho2D(0,windowWidth,windowHeight,0);
 }
 
 
