@@ -9,6 +9,7 @@
 #include <GL/gl.h>
 #include <Windows.h>
 #include <math.h>
+#include <string>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void glutDrawText(void *font, char *text, float xPos, float yPos);
 
 class rectangle{
 	public:
-        rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep);                        //constructor
+        rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep, char *name);                        //constructor
 	    void display();                  //display rectangle
 	private:
 		bool animate;
@@ -48,11 +49,15 @@ class rectangle{
 		float *color;
 		float sleep;
 		char *name;
+		float nameWidth;
+		void *font;
+		float textX;
+		float textY;
 		void animeRec();
 };
 
 
-rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep){
+rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep, char *name){
 	this->animate = true;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -61,7 +66,12 @@ rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float wid
 	this->width = width;
 	this->color = color;
 	this->sleep = sleep;
-	this->name = name;
+	this->name = new char[strlen(name)];
+	strcpy(this->name,name);
+	font = GLUT_BITMAP_HELVETICA_18;
+	nameWidth = glutBitmapLength(font, (unsigned char*)name);
+	textX = (((xRight-xLeft)/2) + xLeft) - (nameWidth/2);
+	textY = ((yBottom-yTop)/2) + yTop;
 }
 
 
@@ -101,7 +111,8 @@ void rectangle::display(){
 
     glEnd();
 
-	glutDrawText(GLUT_BITMAP_HELVETICA_18, "text", 80, 80);
+	glColor3f(white[0],white[1],white[2]);
+	glutDrawText(font, name, textX, textY);
 }
 
 void glutDrawText(void *font, char *text, float xPos, float yPos)
@@ -209,7 +220,7 @@ void rectangle::animeRec()
 void display();
 void init();
 
-rectangle r1 = rectangle(50,200,50,100,5, pink, 1000);
+rectangle r1 = rectangle(50,200,50,100,5, pink, 1000, "Zak");
 
 
 void main(int argc, char ** argv)
