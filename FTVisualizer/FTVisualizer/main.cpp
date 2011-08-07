@@ -31,6 +31,7 @@ const int topR = 1;
 const int bottomR = 2;
 const int bottomL = 3;
 
+//sides
 const int LEFT = 0;
 const int TOP = 1;
 const int RIGHT = 2;
@@ -39,7 +40,7 @@ const int X_COORD = 0;
 const int Y_COORD = 1;
 
 
-const float WIDTH = 5;
+const float WIDTH = 3;
 const float ANIME_INCREMENT = 1;
 
 
@@ -51,17 +52,15 @@ void glutDrawText(void *font, char *text, float xPos, float yPos);
 
 
 
-class rectangle{
+class person{
 	public:
-        rectangle(float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name);                        //constructor
+        person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name);                        //constructor
 	    void display();                  //display rectangle
 		float **getPos();                  //display rectangle
-		float *getLeft();                  //display rectangle
-		float *getRight();                 //display rectangle
-		float *getTop();                   //display rectangle
-		float *getBottom();                //display rectangle
+		int getDate();
 	private:
 		bool animate;
+		int date;
 		float xLeft;
 		float xRight;
 		float yBottom;
@@ -75,8 +74,9 @@ class rectangle{
 		float textY;
 		void draw();
 };
-rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
+person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
 	this->animate = true;
+	this->date = date;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
 	this->yBottom = yBottom;
@@ -90,7 +90,7 @@ rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom, float *c
 	textX = (((xRight-xLeft)/2) + xLeft) - (nameWidth/2);
 	textY = ((yBottom-yTop)/2) + yTop;
 }
-void rectangle::display(){
+void person::display(){
 	glColor3f(white[0],white[1],white[2]);
 	glutDrawText(font, name, textX, textY);    
 
@@ -129,7 +129,7 @@ void rectangle::display(){
 
     glEnd();
 }
-void rectangle::draw()
+void person::draw()
 {
 	float val = ANIME_INCREMENT;
 	float perimeter = ((xRight - xLeft)) + ((yBottom - yTop));
@@ -214,7 +214,7 @@ void rectangle::draw()
 	animate = false;
     //glEnd();
 }
-float **rectangle::getPos()
+float **person::getPos()
 {
 	float **pos = new float*[4];
 	for(int i=0;i<4;++i)
@@ -234,17 +234,22 @@ float **rectangle::getPos()
 
 	return pos;
 }
-
+int person::getDate()
+{
+	return date;
+}
 
 class marriage{
 	public:
-        marriage(rectangle *groom, rectangle *bride, float sleep);                        //constructor
+        marriage(int date, person *groom, person *bride, float sleep);                        //constructor
 	    void display();                  //display rectangle
 		void setDivorce();               //display rectangle
+		int getDate();
 	private:
 		bool animate;
 		bool children;
 		bool divorce;
+		int date;
 		float xLeft;
 		float xRight;
 		float y;
@@ -256,10 +261,11 @@ void marriage::setDivorce()
 {
 	divorce = !divorce;
 }
-marriage::marriage(rectangle *groom, rectangle *bride, float sleep){
+marriage::marriage(int date, person *groom, person *bride, float sleep){
 	this->animate = true;
 	this->children = false;
 	this->divorce = false;
+	this->date = date;
 	float **groomPos = groom->getPos();
 	float **bridePos = bride->getPos();
 	if(groomPos[LEFT][X_COORD] > bridePos[RIGHT][X_COORD])
@@ -345,15 +351,20 @@ void marriage::draw()
 	animate = false;
 	return;
 }
+int marriage::getDate()
+{
+	return date;
+}
 
 
 
+void viewManage();
 void display();
 void init();
 
-rectangle *r1 = new rectangle(300,450,50,100, blue, 1000, "Groom");
-rectangle *r2 = new rectangle(50,200,50,100, pink, 1000, "Bride");
-marriage *m = new marriage(r1, r2, 1000);
+person *r1 = new person(19880101,300,450,50,100, blue, 1000, "Groom");
+person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride");
+marriage *m = new marriage(20110101,r1,r2, 1000);
 
 void main(int argc, char ** argv)
 {
