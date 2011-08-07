@@ -22,6 +22,7 @@ int windowPosY   = 50;    // Window's top-left corner y
 //colors
 float blue[]={0,0,153}; 
 float pink[]={204,0,153};
+float red[]={200,0,0};
 float white[]={1,1,1};
 
 //corners
@@ -289,7 +290,31 @@ void marriage::display()
 	glVertex2i(xLeft,y-WIDTH);
 	glVertex2i(xRight,y-WIDTH);
 	glVertex2i(xRight,y);
-    glEnd();
+	glEnd();
+
+	if(divorce)
+	{
+		float length = WIDTH*3;
+		float xMid = ((xRight-xLeft)/2) + xLeft;
+		float yMid = y-(WIDTH/2);
+		float xStart = (xMid+(length/2)) - (WIDTH/2);
+		float yStart = yMid-(length/2);
+		float yEnd = yMid+(length/2);
+		float increment = 0.25;
+
+		glColor3f(red[0],red[1],red[2]);
+		for(float i=yStart;i<=yEnd;i+=increment)
+		{
+			glBegin(GL_QUADS);
+			glVertex2i(xStart,yStart);
+			glVertex2i(xStart+WIDTH,yStart);
+			glVertex2i(xStart+WIDTH,yStart+increment);
+			glVertex2i(xStart,yStart+increment);
+			glEnd();
+			xStart-=increment;
+			yStart+=increment;
+		}
+	}
 }
 void marriage::draw()
 {
