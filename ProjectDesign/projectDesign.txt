@@ -13,11 +13,12 @@ G: gender.
 P1: Father.
 P2: Mother.
 P: Partner.
+BD: Birth date of partner
 
 Folder Structure: 
 [D,1,N,G,P1,P2]          //Birth.
 [D,2,N]                  //Death.
-[D,3,N,P]                //Wedding.
+[D,3,N,P,BD]             //Wedding.
 [D,4,N,P]                //Divorce.
 
 
