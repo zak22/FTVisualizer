@@ -30,22 +30,41 @@ const int topR = 1;
 const int bottomR = 2;
 const int bottomL = 3;
 
+const int LEFT = 0;
+const int TOP = 1;
+const int RIGHT = 2;
+const int BOTTOM = 3;
+const int X_COORD = 0;
+const int Y_COORD = 1;
+
+
+const float WIDTH = 5;
+const float ANIME_INCREMENT = 1;
+
+
 void glutDrawText(void *font, char *text, float xPos, float yPos);
 
 //rectangles
 
 
+
+
+
 class rectangle{
 	public:
-        rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep, char *name);                        //constructor
+        rectangle(float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name);                        //constructor
 	    void display();                  //display rectangle
+		float **getPos();                  //display rectangle
+		float *getLeft();                  //display rectangle
+		float *getRight();                 //display rectangle
+		float *getTop();                   //display rectangle
+		float *getBottom();                //display rectangle
 	private:
 		bool animate;
 		float xLeft;
 		float xRight;
 		float yBottom;
 		float yTop;
-		float width;
 		float *color;
 		float sleep;
 		char *name;
@@ -53,17 +72,14 @@ class rectangle{
 		void *font;
 		float textX;
 		float textY;
-		void animeRec();
+		void draw();
 };
-
-
-rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float width, float *color, float sleep, char *name){
+rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
 	this->animate = true;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
 	this->yBottom = yBottom;
 	this->yTop = yTop;
-	this->width = width;
 	this->color = color;
 	this->sleep = sleep;
 	this->name = new char[strlen(name)];
@@ -73,12 +89,13 @@ rectangle::rectangle(float xLeft,float xRight,float yTop,float yBottom,float wid
 	textX = (((xRight-xLeft)/2) + xLeft) - (nameWidth/2);
 	textY = ((yBottom-yTop)/2) + yTop;
 }
-
-
 void rectangle::display(){
-    if(animate)
+	glColor3f(white[0],white[1],white[2]);
+	glutDrawText(font, name, textX, textY);    
+
+	if(animate)
 	{
-		animeRec();
+		draw();
 		return;
 	}
 
@@ -87,47 +104,33 @@ void rectangle::display(){
 	glBegin(GL_QUADS);
 
 	glVertex2i(xLeft,yTop);
-	glVertex2i(xLeft-width,yTop);
-	glVertex2i(xLeft-width,yBottom);
+	glVertex2i(xLeft-WIDTH,yTop);
+	glVertex2i(xLeft-WIDTH,yBottom);
 	glVertex2i(xLeft,yBottom);
 
 
 	glVertex2i(xRight,yTop);
-	glVertex2i(xRight+width,yTop);
-	glVertex2i(xRight+width,yBottom);
+	glVertex2i(xRight+WIDTH,yTop);
+	glVertex2i(xRight+WIDTH,yBottom);
 	glVertex2i(xRight,yBottom);
 
     
 	glVertex2i(xLeft,yTop);
-	glVertex2i(xLeft,yTop-width);
-	glVertex2i(xRight,yTop-width);
+	glVertex2i(xLeft,yTop-WIDTH);
+	glVertex2i(xRight,yTop-WIDTH);
 	glVertex2i(xRight,yTop);
 
 
 	glVertex2i(xLeft,yBottom);
-    glVertex2i(xLeft,yBottom+width);
-	glVertex2i(xRight,yBottom+width);
+    glVertex2i(xLeft,yBottom+WIDTH);
+	glVertex2i(xRight,yBottom+WIDTH);
 	glVertex2i(xRight,yBottom);
 
     glEnd();
-
-	glColor3f(white[0],white[1],white[2]);
-	glutDrawText(font, name, textX, textY);
 }
-
-void glutDrawText(void *font, char *text, float xPos, float yPos)
+void rectangle::draw()
 {
-	glRasterPos2i(xPos, yPos);
-	while(*text){
-		glutBitmapCharacter(font, *text);
-		text++;
-	}
-}
-
-
-void rectangle::animeRec()
-{
-	float val = 1;
+	float val = ANIME_INCREMENT;
 	float perimeter = ((xRight - xLeft)) + ((yBottom - yTop));
 	int slp = (int) floor(sleep/(perimeter/val));
 
@@ -140,8 +143,8 @@ void rectangle::animeRec()
 
 		glBegin(GL_QUADS);
 		glVertex2i(tmpL,yBottom);
-		glVertex2i(tmpL,yBottom+width);
-		glVertex2i(tmpR,yBottom+width);
+		glVertex2i(tmpL,yBottom+WIDTH);
+		glVertex2i(tmpR,yBottom+WIDTH);
 		glVertex2i(tmpR,yBottom);
 		glEnd();
 
@@ -162,13 +165,13 @@ void rectangle::animeRec()
 		glBegin(GL_QUADS);
 		//Left Bar
 		glVertex2i(xLeft,tmpT);
-		glVertex2i(xLeft-width,tmpT);
-		glVertex2i(xLeft-width,yBottom);
+		glVertex2i(xLeft-WIDTH,tmpT);
+		glVertex2i(xLeft-WIDTH,yBottom);
 		glVertex2i(xLeft,yBottom);
 		//Right Bar
 		glVertex2i(xRight,tmpT);
-		glVertex2i(xRight+width,tmpT);
-		glVertex2i(xRight+width,yBottom);
+		glVertex2i(xRight+WIDTH,tmpT);
+		glVertex2i(xRight+WIDTH,yBottom);
 		glVertex2i(xRight,yBottom);
 		glEnd();
 
@@ -189,14 +192,14 @@ void rectangle::animeRec()
 		
 		//Top Bar (Left)
 		glVertex2i(xLeft,yTop);
-		glVertex2i(xLeft,yTop-width);
-		glVertex2i(tmpL,yTop-width);
+		glVertex2i(xLeft,yTop-WIDTH);
+		glVertex2i(tmpL,yTop-WIDTH);
 		glVertex2i(tmpL,yTop);
 		
 		//Top Bar (Right)
 		glVertex2i(tmpR,yTop);
-		glVertex2i(tmpR,yTop-width);
-		glVertex2i(xRight,yTop-width);
+		glVertex2i(tmpR,yTop-WIDTH);
+		glVertex2i(xRight,yTop-WIDTH);
 		glVertex2i(xRight,yTop);		
 		glEnd();
 
@@ -207,21 +210,125 @@ void rectangle::animeRec()
 		Sleep(slp);
 	}
 
-	animate = 0;
+	animate = false;
     //glEnd();
+}
+float **rectangle::getPos()
+{
+	float **pos = new float*[4];
+	for(int i=0;i<4;++i)
+		pos[i] = new float[2];
+
+	pos[LEFT][X_COORD] = xLeft-WIDTH;
+	pos[LEFT][Y_COORD] = ((yBottom-yTop)/2) + yTop + (WIDTH/2);
+
+	pos[RIGHT][X_COORD] = xRight+WIDTH;
+	pos[RIGHT][Y_COORD] = ((yBottom-yTop)/2) + yTop + (WIDTH/2);
+
+	pos[TOP][X_COORD] = ((xRight-xLeft)/2) + xLeft + (WIDTH/2);
+	pos[TOP][Y_COORD] = yTop - WIDTH;
+
+    pos[BOTTOM][X_COORD] = ((xRight-xLeft)/2) + xLeft + (WIDTH/2);
+	pos[BOTTOM][Y_COORD] = yBottom+WIDTH;
+
+	return pos;
 }
 
 
-//int animate = 1;
+class marriage{
+	public:
+        marriage(rectangle *groom, rectangle *bride, float sleep);                        //constructor
+	    void display();                  //display rectangle
+		void setDivorce();               //display rectangle
+	private:
+		bool animate;
+		bool children;
+		bool divorce;
+		float xLeft;
+		float xRight;
+		float y;
+		float *color;
+		float sleep;
+		void draw();
+};
+void marriage::setDivorce()
+{
+	divorce = !divorce;
+}
+marriage::marriage(rectangle *groom, rectangle *bride, float sleep){
+	this->animate = true;
+	this->children = false;
+	this->divorce = false;
+	float **groomPos = groom->getPos();
+	float **bridePos = bride->getPos();
+	if(groomPos[LEFT][X_COORD] > bridePos[RIGHT][X_COORD])
+	{
+		this->xLeft = bridePos[RIGHT][X_COORD];
+		this->xRight = groomPos[LEFT][X_COORD];
+	}
+	else
+	{
+		this->xLeft = groomPos[RIGHT][X_COORD];
+		this->xRight = bridePos[LEFT][X_COORD];
+	}
+	this->y = groomPos[RIGHT][Y_COORD];
+	this->color = white;
+	this->sleep = sleep;
+}
+void marriage::display()
+{
+	if(animate)
+	{
+		draw();
+		return;
+	}
 
-//functions
-//void rectangle(float xLeft, float xRight, float yBottom, float yTop,float width, float *color, float sleep);
-//void animeRec(float xLeft,float xRight,float yBottom,float yTop,float width, float *color, float sleep);
+	glColor3f(color[0],color[1],color[2]);
+	glBegin(GL_QUADS);
+	glVertex2i(xLeft,y);
+	glVertex2i(xLeft,y-WIDTH);
+	glVertex2i(xRight,y-WIDTH);
+	glVertex2i(xRight,y);
+    glEnd();
+}
+void marriage::draw()
+{
+	float val = ANIME_INCREMENT;
+	float length = xRight - xLeft;
+	int slp = (int) floor(sleep/(length/val));
+	glColor3f(white[0],white[1],white[2]);
+		
+	float tmpL = (((xRight - xLeft)/2) + xLeft) - val;
+	float tmpR = (((xRight - xLeft)/2) + xLeft) + val;
+	while(tmpL >= xLeft)
+	{
+		glColor3f(color[0],color[1],color[2]);
+
+		glBegin(GL_QUADS);
+		glVertex2i(tmpL,y);
+		glVertex2i(tmpL,y-WIDTH);
+		glVertex2i(tmpR,y-WIDTH);
+		glVertex2i(tmpR,y);
+		glEnd();
+
+		glFlush();
+		glutPostRedisplay();
+		tmpL -= val;
+		tmpR += val;
+		Sleep(slp);
+	}
+	animate = false;
+	return;
+}
+
+
+
 void display();
 void init();
 
-rectangle r1 = rectangle(50,200,50,100,5, pink, 1000, "Zak");
-
+rectangle *r1 = new rectangle(300,450,50,100, blue, 1000, "Groom");
+rectangle *r2 = new rectangle(50,200,50,100, pink, 1000, "Bride");
+marriage *m = new marriage(r1, r2, 1000);
 
 void main(int argc, char ** argv)
 {
@@ -241,7 +348,10 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	r1.display();
+	r1->display();
+	r2->display();
+	m->display();
+
 
 	//glColor3f(pink[0],pink[1],pink[2]);
 	//glBegin(GL_QUADS);		
@@ -266,6 +376,12 @@ void init()
 	glClearColor(0,0,0,0);
 	gluOrtho2D(0,windowWidth,windowHeight,0);
 }
-
-
+void glutDrawText(void *font, char *text, float xPos, float yPos)
+{
+	glRasterPos2i(xPos, yPos);
+	while(*text){
+		glutBitmapCharacter(font, *text);
+		text++;
+	}
+}
 
