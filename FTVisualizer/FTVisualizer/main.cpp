@@ -10,6 +10,9 @@
 #include <Windows.h>
 #include <math.h>
 #include <string>
+#include <vector>
+#include <fstream>
+
 
 using namespace std;
 
@@ -50,7 +53,22 @@ int currDate = 2000;
 int TEXT_SIZE = 18;
 
 
+//represent an event
+struct events
+{
+	int date;
+	int eventType;
+	char ** details;
+};
+
+
+
+
 void glutDrawText(void *font, char *text, float xPos, float yPos);
+void viewManage();
+void display();
+void init();
+int numOfOccurrences(char *a, char c);
 
 //rectangles
 
@@ -60,7 +78,7 @@ void glutDrawText(void *font, char *text, float xPos, float yPos);
 
 class person{
 	public:
-        person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name);                        //constructor
+        person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name, int gen);                        //constructor
 	    void display();                  //display rectangle
 		float **getPos();                  //display rectangle
 		int getDate();
@@ -69,6 +87,7 @@ class person{
 	private:
 		bool animate;
 		bool dead;
+		int generation;
 		int date;
 		float xLeft;
 		float xRight;
@@ -86,9 +105,10 @@ class person{
 		void draw();
 		void setAge();
 };
-person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
+person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name, int gen){
 	this->animate = true;
 	this->dead = false;
+	this->generation = gen;
 	this->date = date;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -390,20 +410,15 @@ int marriage::getDate()
 	return date;
 }
 
-struct events
-{
-	int date;
-	int eventType;
-	char ** details;
-};
+
+void newPerson(events e, vector<person> people, vector<marriage> marriages);
+void setDeath(events e, vector<person> people, vector<marriage> marriages);
+void newMarriage(events e, vector<person> people, vector<marriage> marriages);
+void setDivorce(events e, vector<person> people, vector<marriage> marriages);
 
 
-void viewManage();
-void display();
-void init();
-
-person *r1 = new person(19880101,300,450,50,100, blue, 1000, "Groom");
-person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride");
+person *r1 = new person(19880101,300,450,50,100, blue, 1000, "Groom", 0);
+person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride", 0);
 marriage *m = new marriage(20110101,r1,r2, 1000);
 
 void main(int argc, char ** argv)
@@ -420,13 +435,92 @@ void main(int argc, char ** argv)
 
 void viewManage()
 {
+	vector<person> people;
+	vector<marriage> marriages;
+	events *eventsList;
+
+	ifstream read;							// to read from data file
+	read.open ("T:\\sampleEvents.txt");      // opening data file
+	char *line;
+	string lineStr;
+	int lineCount=0;
+	int itemsCount=0;
+	char *tmp;
+    if (!read.is_open())              
+		return;
+
+	while (getline(read,lineStr))
+		++lineCount;
+	
+	eventsList = new events[lineCount];
+	
+	read.clear();
+	read.seekg(0);
+	
+
+	for(int i=0;i<lineCount;++i){
+		getline(read,lineStr);
+		line = (char*)lineStr.c_str();
+		itemsCount = numOfOccurrences(line,',')-1;
+		eventsList[i].details = new char*[itemsCount];
+		
+		eventsList[i].date = atoi(strtok(line,","));
+		eventsList[i].eventType = atoi(strtok(NULL,","));
+		
+		for(int k=0;k<itemsCount;++k)
+		{
+			tmp = strtok(NULL,",");
+			eventsList[i].details[k] = new char[strlen(tmp)+1];
+			strcpy(eventsList[i].details[k],tmp);
+		}
+	}
+
+	//char *e1 = "19370324,1,John,m,0,0"
+	//char *e2 = "19400213,1,Ali,m,0,0"
+	for(int i=0;i<lineCount;++i)
+	{
+		if(eventsList[i].eventType == 1)
+			newPerson(eventsList[i], people, marriages);
+		else if(eventsList[i].eventType == 2)
+			setDeath(eventsList[i], people, marriages);
+		else if(eventsList[i].eventType == 3)
+			newMarriage(eventsList[i], people, marriages);
+		else if(eventsList[i].eventType == 4)
+			setDivorce(eventsList[i], people, marriages);
+
+	}
 
 
-
+	
 
 
 }
 
+void newPerson(events e, vector<person> people, vector<marriage> marriages){};
+void setDeath(events e, vector<person> people, vector<marriage> marriages){};
+void newMarriage(events e, vector<person> people, vector<marriage> marriages){};
+void setDivorce(events e, vector<person> people, vector<marriage> marriages){};
+
+
+//person numOfOccurrences(char *a, char c)
+//{
+//	int arrLen = strlen(a);
+//	int count=0;
+//	for(int i=0;i<arrLen;++i)
+//		if(a[i]==c)
+//			++count;
+//	return count;
+//}
+
+int numOfOccurrences(char *a, char c)
+{
+	int arrLen = strlen(a);
+	int count=0;
+	for(int i=0;i<arrLen;++i)
+		if(a[i]==c)
+			++count;
+	return count;
+}
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
