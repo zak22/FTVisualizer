@@ -1,11 +1,5 @@
-/*Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
- *
- *Look at the LICENSE by going to this link: 
- *https://github.com/zak22/FTVisualizer/blob/master/LICENSE
- *
- */
- 
- 
+//Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
+
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <iostream>
 #include <stdlib.h>
@@ -45,9 +39,15 @@ const int BOTTOM = 3;
 const int X_COORD = 0;
 const int Y_COORD = 1;
 
-
+//Shapes drawing variables
 const float WIDTH = 3;
 const float ANIME_INCREMENT = 1;
+
+//Current Date
+int currDate = 2000;
+
+//text size
+int TEXT_SIZE = 18;
 
 
 void glutDrawText(void *font, char *text, float xPos, float yPos);
@@ -64,8 +64,11 @@ class person{
 	    void display();                  //display rectangle
 		float **getPos();                  //display rectangle
 		int getDate();
+		void person::setDead();
+		void drawNameAndAge();
 	private:
 		bool animate;
+		bool dead;
 		int date;
 		float xLeft;
 		float xRight;
@@ -73,15 +76,19 @@ class person{
 		float yTop;
 		float *color;
 		float sleep;
+		char *age;
 		char *name;
-		float nameWidth;
 		void *font;
 		float textX;
 		float textY;
+		float ageX;
+		float ageY;
 		void draw();
+		void setAge();
 };
 person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
 	this->animate = true;
+	this->dead = false;
 	this->date = date;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -92,13 +99,24 @@ person::person(int date, float xLeft,float xRight,float yTop,float yBottom, floa
 	this->name = new char[strlen(name)];
 	strcpy(this->name,name);
 	font = GLUT_BITMAP_HELVETICA_18;
-	nameWidth = glutBitmapLength(font, (unsigned char*)name);
+	int nameWidth = glutBitmapLength(font, (unsigned char*)name);
 	textX = (((xRight-xLeft)/2) + xLeft) - (nameWidth/2);
-	textY = ((yBottom-yTop)/2) + yTop;
+	textY = ((yBottom-yTop)/2) + yTop - 3;
+	this->age = new char[5];
+	setAge();
+	int ageWidth = glutBitmapLength(font, (unsigned char*)age);
+	ageX = (((xRight-xLeft)/2) + xLeft) - (ageWidth/2);
+	ageY = textY + TEXT_SIZE + 3;
 }
 void person::display(){
+	
+	//draw name and age
+	setAge();
 	glColor3f(white[0],white[1],white[2]);
-	glutDrawText(font, name, textX, textY);    
+	glutDrawText(font, name, textX, textY);
+	glutDrawText(font, age, ageX, ageY);
+
+
 
 	if(animate)
 	{
@@ -244,6 +262,16 @@ int person::getDate()
 {
 	return date;
 }
+void person::setDead()
+{
+	dead = true;
+}
+void person::setAge()
+{
+	int birthYear = date/10000;
+	itoa(currDate - birthYear,age,10);
+}
+
 
 class marriage{
 	public:
@@ -362,6 +390,12 @@ int marriage::getDate()
 	return date;
 }
 
+struct events
+{
+	int date;
+	int eventType;
+	char ** details;
+};
 
 
 void viewManage();
@@ -384,7 +418,14 @@ void main(int argc, char ** argv)
     glutMainLoop();
 }
 
+void viewManage()
+{
 
+
+
+
+
+}
 
 void display()
 {
@@ -426,4 +467,3 @@ void glutDrawText(void *font, char *text, float xPos, float yPos)
 		text++;
 	}
 }
-
