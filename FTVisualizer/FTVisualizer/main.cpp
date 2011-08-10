@@ -1,5 +1,11 @@
-//Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
-
+/*Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
+ *
+ *Look at the LICENSE by going to this link: 
+ *https://github.com/zak22/FTVisualizer/blob/master/LICENSE
+ *
+ */
+ 
+ 
 #define GLUT_DISABLE_ATEXIT_HACK
 #include <iostream>
 #include <stdlib.h>
