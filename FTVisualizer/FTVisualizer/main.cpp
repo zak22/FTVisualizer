@@ -45,6 +45,17 @@ const int Y_COORD = 1;
 //Shapes drawing variables
 const float WIDTH = 3;
 const float ANIME_INCREMENT = 1;
+float personWidth = 120;
+float personHeight = 50;
+float linkWidth = 50;
+
+//Shapes dimensions variables
+float rootFarLeft = -1;
+float rootFarRight = -1;
+float screenFarLeft = -1;
+float screenFarRight = -1;
+
+
 
 //Current Date
 int currDate = 2000;
@@ -78,7 +89,7 @@ int numOfOccurrences(char *a, char c);
 
 class person{
 	public:
-        person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name, int gen);                        //constructor
+        person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name);                        //constructor
 	    void display();                  //display rectangle
 		float **getPos();                  //display rectangle
 		int getDate();
@@ -87,7 +98,6 @@ class person{
 	private:
 		bool animate;
 		bool dead;
-		int generation;
 		int date;
 		float xLeft;
 		float xRight;
@@ -105,10 +115,9 @@ class person{
 		void draw();
 		void setAge();
 };
-person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name, int gen){
+person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
 	this->animate = true;
 	this->dead = false;
-	this->generation = gen;
 	this->date = date;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -411,15 +420,21 @@ int marriage::getDate()
 }
 
 
-void newPerson(events e, vector<person> people, vector<marriage> marriages);
-void setDeath(events e, vector<person> people, vector<marriage> marriages);
-void newMarriage(events e, vector<person> people, vector<marriage> marriages);
-void setDivorce(events e, vector<person> people, vector<marriage> marriages);
+void newPerson(events e);
+void setDeath(events e);
+void newMarriage(events e);
+void setDivorce(events e);
 
 
-person *r1 = new person(19880101,300,450,50,100, blue, 1000, "Groom", 0);
-person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride", 0);
-marriage *m = new marriage(20110101,r1,r2, 1000);
+//person *r1 = new person(19880101,300,450,50,100, blue, 1000, "Groom");
+//person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride");
+//marriage *m = new marriage(20110101,r1,r2, 1000);
+
+	vector <person*> people;
+	vector <marriage*> marriages;
+	events *eventsList = NULL;
+	int lineCount=0;
+
 
 void main(int argc, char ** argv)
 {
@@ -435,71 +450,154 @@ void main(int argc, char ** argv)
 
 void viewManage()
 {
-	vector<person> people;
-	vector<marriage> marriages;
-	events *eventsList;
+	//vector <person*> people;
+	//vector <marriage*> marriages;
+	//events *eventsList;
+	int  peopleCount=0;
+	int marriagesCount=0;
 
-	ifstream read;							// to read from data file
-	read.open ("T:\\sampleEvents.txt");      // opening data file
 	char *line;
 	string lineStr;
-	int lineCount=0;
 	int itemsCount=0;
 	char *tmp;
-    if (!read.is_open())              
-		return;
 
-	while (getline(read,lineStr))
-		++lineCount;
+	if(!eventsList)
+	{
+		ifstream read;							// to read from data file
+		read.open ("T:\\sampleEvents.txt");      // opening data file
+		if (!read.is_open())              
+			return;
+
+		while (getline(read,lineStr))
+			++lineCount;
 	
-	eventsList = new events[lineCount];
+		eventsList = new events[lineCount];
 	
-	read.clear();
-	read.seekg(0);
+		read.clear();
+		read.seekg(0);
 	
 
-	for(int i=0;i<lineCount;++i){
-		getline(read,lineStr);
-		line = (char*)lineStr.c_str();
-		itemsCount = numOfOccurrences(line,',')-1;
-		eventsList[i].details = new char*[itemsCount];
-		
-		eventsList[i].date = atoi(strtok(line,","));
-		eventsList[i].eventType = atoi(strtok(NULL,","));
-		
-		for(int k=0;k<itemsCount;++k)
+		for(int i=0;i<lineCount;++i)
 		{
-			tmp = strtok(NULL,",");
-			eventsList[i].details[k] = new char[strlen(tmp)+1];
-			strcpy(eventsList[i].details[k],tmp);
+			getline(read,lineStr);
+			line = (char*)lineStr.c_str();
+			itemsCount = numOfOccurrences(line,',')-1;
+			eventsList[i].details = new char*[itemsCount];
+		
+			eventsList[i].date = atoi(strtok(line,","));
+			eventsList[i].eventType = atoi(strtok(NULL,","));
+		
+			for(int k=0;k<itemsCount;++k)
+			{
+				tmp = strtok(NULL,",");
+				eventsList[i].details[k] = new char[strlen(tmp)+1];
+				strcpy(eventsList[i].details[k],tmp);
+			}
 		}
-	}
-
+		read.clear();
+		read.close();
+	
 	//char *e1 = "19370324,1,John,m,0,0"
 	//char *e2 = "19400213,1,Ali,m,0,0"
+		for(int i=0;i<lineCount;++i)
+		{
+			if(eventsList[i].eventType == 1)
+				newPerson(eventsList[i]);
+			else if(eventsList[i].eventType == 2)
+				setDeath(eventsList[i]);
+			else if(eventsList[i].eventType == 3)
+				newMarriage(eventsList[i]);
+			else if(eventsList[i].eventType == 4)
+				setDivorce(eventsList[i]);
+		}
+	}
+	
 	for(int i=0;i<lineCount;++i)
 	{
 		if(eventsList[i].eventType == 1)
-			newPerson(eventsList[i], people, marriages);
-		else if(eventsList[i].eventType == 2)
-			setDeath(eventsList[i], people, marriages);
+		{
+			people[peopleCount]->display();
+			++peopleCount;
+		}
 		else if(eventsList[i].eventType == 3)
-			newMarriage(eventsList[i], people, marriages);
-		else if(eventsList[i].eventType == 4)
-			setDivorce(eventsList[i], people, marriages);
+		{
+			marriages[marriagesCount]->display();
+			++marriagesCount;
+		}
+	}
 
+}
+void newPerson(events e)
+{
+	int L, R, T, B;
+	float *c; 
+
+	if(!atoi(e.details[2]) && !atoi(e.details[3]))
+	{
+		if(rootFarLeft < 0)
+		{
+			L = (windowWidth/2)-(personWidth/2);
+			R = L+personWidth;
+			T = 50;
+			B = T+personHeight;
+			
+			if(e.details[1][0] == 'm')
+				c = blue;
+			else
+				c = pink;
+
+			rootFarLeft = L;
+			rootFarRight = R;
+			screenFarLeft = L;
+			rootFarRight = R;
+		}
+		else
+		{
+			if(rootFarLeft > windowWidth-rootFarRight)
+			{
+				R = rootFarLeft - linkWidth;
+				L = R - personWidth;
+				T = 50;
+				B = T+personHeight;
+
+				if(e.details[1][0] == 'm')
+					c = blue;
+				else
+					c = pink;
+
+				rootFarLeft = L;
+				if(L < screenFarLeft)
+					screenFarLeft = L;
+			}
+			else
+			{
+				L = rootFarRight + linkWidth;
+				R = L + personWidth;
+				T = 50;
+				B = T+personHeight;
+
+				if(e.details[1][0] == 'm')
+					c = blue;
+				else
+					c = pink;
+
+				rootFarRight = R;
+				if(R > screenFarRight)
+					screenFarRight = R;
+			}
+		}
+		people.push_back(new person(e.date,L,R,T,B, c, 1000, e.details[0]));
+	}
+	else
+	{
+		//find parents then call marriage add child
 	}
 
 
-	
-
-
 }
-
-void newPerson(events e, vector<person> people, vector<marriage> marriages){};
-void setDeath(events e, vector<person> people, vector<marriage> marriages){};
-void newMarriage(events e, vector<person> people, vector<marriage> marriages){};
-void setDivorce(events e, vector<person> people, vector<marriage> marriages){};
+void setDeath(events e){};
+void newMarriage(events e){};
+void setDivorce(events e){};
 
 
 //person numOfOccurrences(char *a, char c)
@@ -525,10 +623,10 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	r1->display();
-	r2->display();
-	m->display();
-
+	//r1->display();
+	//r2->display();
+	//m->display();
+	viewManage();
 
 	//glColor3f(pink[0],pink[1],pink[2]);
 	//glBegin(GL_QUADS);		
