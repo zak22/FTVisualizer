@@ -1,41 +1,30 @@
-/*
- *Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
- *
- *Look at the LICENSE by going to this link: 
- *https://github.com/zak22/FTVisualizer/blob/master/LICENSE
- *
- */ 
-
-[19370324,1,John,male,Adam,Mai]          
-[20270108,2,John]                  
-[19671111,3,John,Sara,19401020] 
-
-[19400213,1,Ali,male,Adam,Mai]                            
-[19800510,3,Ali,Alexa,19401201]             
+19370324,1,John,m,Adam,Mai
+19400213,1,Ali,m,Adam,Mai  
+19671111,3,John,Sara,19401020 
+19800408,1,Nichole,f,John,Sara
+19800510,3,Ali,Alexa,19401201
+19821119,1,Ted,m,Ali,Alexa 
+19830809,1,Andrew,m,John,Sara 
+19840728,1,Amani,f,John,Sara 
+20020212,3,Ted,Jonea,19820612
+20040909,3,Andrew,Rachel,19850701 
+20050612,3,Nichole,Alex,19880902 
+20051209,1,Barney,m,Andrew,Rachel  
+20060105,1,Luffy,m,Alex,Nichole 
+20070210,1,Nami,f,Ted,Jonea 
+20080127,1,Lily,f,Alex,Nichole
+20080909,4,Andrew,Rachel
+20090210,1,Franky,m,Ted,Jonea 
+20270108,2,John                  
+20300309,3,Luffy,Nami,20070210
+20300309,3,Nami,Luffy,20060105                           
+             
+                    
+                                   
+          
+         
+                           
             
+                                   
  
-[19800408,1,Nichole,famale,John,Sara]                            
-[20050612,3,Nichole,Alex,19880902]             
-                          
-[19830809,1,Andrew,male,John,Sara]                           
-[20040909,3,Andrew,Rachel,19850701]             
-[20080909,4,Andrew,Rachel]
-
-[19840728,1,Amani,famale,John,Sara]
-
-[20060105,1,Luffy,male,Alex,Nichole]                            
-[20300309,3,Luffy,Nami,20070210]             
-
-[20080127,1,Lily,famale,Alex,Nichole]          
-
-[20051209,1,Barney,male,Andrew,Rachel]          
-
-
-[19821119,1,Ted,male,Ali,Alexa]                            
-[20020212,3,Ted,Jonea,19820612]             
-
-[20070210,1,Nami,famale,Ted,Jonea]                           
-[20300309,3,Nami,Luffy,20060105]             
-
-[20090210,1,Franky,male,Ted,Jonea]  
  
