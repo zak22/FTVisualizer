@@ -17,8 +17,8 @@
 using namespace std;
 
 //window
-int windowWidth  = 640;   // Window's width
-int windowHeight = 480;   // Window's height
+int windowWidth  = 1000;   // Window's width
+int windowHeight = 700;   // Window's height
 int windowPosX   = 50;    // Window's top-left corner x
 int windowPosY   = 50;    // Window's top-left corner y
 
@@ -43,7 +43,7 @@ const int X_COORD = 0;
 const int Y_COORD = 1;
 
 //Shapes drawing variables
-const float WIDTH = 3;
+const float WIDTH = 7;
 const float ANIME_INCREMENT = 1;
 float personWidth = 120;
 float personHeight = 50;
@@ -58,7 +58,7 @@ float screenFarRight = -1;
 
 
 //Current Date
-int currDate = 2000;
+int currDate = 2011;
 
 //text size
 int TEXT_SIZE = 18;
@@ -80,6 +80,7 @@ void viewManage();
 void display();
 void init();
 int numOfOccurrences(char *a, char c);
+int posToInsert(int date);
 
 //rectangles
 
@@ -95,10 +96,12 @@ class person{
 		int getDate();
 		void person::setDead();
 		void drawNameAndAge();
+		char *name;
+		int date;
+		bool root;
 	private:
 		bool animate;
 		bool dead;
-		int date;
 		float xLeft;
 		float xRight;
 		float yBottom;
@@ -106,7 +109,6 @@ class person{
 		float *color;
 		float sleep;
 		char *age;
-		char *name;
 		void *font;
 		float textX;
 		float textY;
@@ -118,6 +120,7 @@ class person{
 person::person(int date, float xLeft,float xRight,float yTop,float yBottom, float *color, float sleep, char *name){
 	this->animate = true;
 	this->dead = false;
+	this->root = false;
 	this->date = date;
 	this->xLeft = xLeft;
 	this->xRight = xRight;
@@ -412,7 +415,6 @@ void marriage::draw()
 		Sleep(slp);
 	}
 	animate = false;
-	return;
 }
 int marriage::getDate()
 {
@@ -430,10 +432,10 @@ void setDivorce(events e);
 //person *r2 = new person(19900101,50,200,50,100, pink, 1000, "Bride");
 //marriage *m = new marriage(20110101,r1,r2, 1000);
 
-	vector <person*> people;
-	vector <marriage*> marriages;
-	events *eventsList = NULL;
-	int lineCount=0;
+vector <person*> people;
+vector <marriage*> marriages;
+events *eventsList = NULL;
+int lineCount=0;
 
 
 void main(int argc, char ** argv)
@@ -497,8 +499,6 @@ void viewManage()
 		read.clear();
 		read.close();
 	
-	//char *e1 = "19370324,1,John,m,0,0"
-	//char *e2 = "19400213,1,Ali,m,0,0"
 		for(int i=0;i<lineCount;++i)
 		{
 			if(eventsList[i].eventType == 1)
@@ -510,22 +510,35 @@ void viewManage()
 			else if(eventsList[i].eventType == 4)
 				setDivorce(eventsList[i]);
 		}
+		
+		for(int i=0;i<lineCount;++i)
+		{
+			if(eventsList[i].eventType == 1)
+			{
+				people[peopleCount]->display();
+				++peopleCount;
+			}
+			else if(eventsList[i].eventType == 3)
+			{
+				marriages[marriagesCount]->display();
+				++marriagesCount;
+			}
+		}
 	}
-	
-	for(int i=0;i<lineCount;++i)
+	else
 	{
-		if(eventsList[i].eventType == 1)
+		marriagesCount = marriages.size();
+		for(int i=0;i<marriagesCount;++i)
 		{
-			people[peopleCount]->display();
-			++peopleCount;
-		}
-		else if(eventsList[i].eventType == 3)
+			marriages[i]->display();
+		}		
+
+		peopleCount = people.size();
+		for(int i=0;i<peopleCount;++i)
 		{
-			marriages[marriagesCount]->display();
-			++marriagesCount;
+			people[i]->display();
 		}
 	}
-
 }
 void newPerson(events e)
 {
@@ -586,29 +599,136 @@ void newPerson(events e)
 					screenFarRight = R;
 			}
 		}
+		
 		people.push_back(new person(e.date,L,R,T,B, c, 1000, e.details[0]));
+		people[people.size()-1]->root = true;
 	}
 	else
 	{
 		//find parents then call marriage add child
 	}
-
-
 }
-void setDeath(events e){};
-void newMarriage(events e){};
+void setDeath(events e)
+{
+	int peopleCount = people.size();
+	for(int i=0;i<peopleCount;++i)
+	{
+		if(!strcmp(people[i]->name, e.details[0]))
+		{
+			people[i]->setDead();
+			return;
+		}
+	}
+}
+void newMarriage(events e)
+{
+	int L, R, T, B;
+	float *c;	
+	int peopleCount = people.size();
+	int groom=-1;
+	int bride=-1;
+	float **pos;
+	int insertPos;
+
+	for(int i=0;i<peopleCount;++i)
+	{
+		if(!strcmp(people[i]->name, e.details[0]))
+		{
+			groom = i;
+		}
+		else if(!strcmp(people[i]->name, e.details[1]))
+		{
+			bride = i;
+		}
+	}
+	
+
+	if(groom < 0)
+	{
+		//tmp! needs to figure a better way to determine location
+		pos = people[bride]->getPos();
+		L = pos[LEFT][X_COORD]-(linkWidth+personWidth)+WIDTH;
+		R = L+personWidth;
+		T = pos[TOP][Y_COORD]+WIDTH;
+		B = T+personHeight;
+		insertPos = posToInsert(e.date);
+
+		if(people[bride]->root)
+		{
+			if(L > rootFarLeft)
+				;//make space (people[bride])
+			else
+			{
+				rootFarLeft = L;
+			}
+		}
+
+		if(insertPos < 0)
+		{
+			people.push_back(new person(atoi(e.details[2]), L, R, T, B, blue, 1000, e.details[0]));
+			groom = people.size()-1;
+		}
+		else
+		{
+			people.insert(people.begin()+insertPos, new person(atoi(e.details[2]), L, R, T, B, blue, 1000, e.details[0]));
+			groom = insertPos;
+		}
+	}
+	else if(bride < 0)
+	{
+		//tmp! needs to figure a better way to determine location
+		pos = people[groom]->getPos();
+		L = pos[LEFT][X_COORD]-(linkWidth+personWidth)+WIDTH;
+		R = L+personWidth;
+		T = pos[TOP][Y_COORD]+WIDTH;
+		B = T+personHeight;
+		insertPos = posToInsert(e.date);
+
+		if(people[groom]->root)
+		{
+			if(L > rootFarLeft)
+				;//make space (people[bride])
+			else
+			{
+				rootFarLeft = L;
+			}
+		}
+		
+		if(insertPos < 0)
+		{
+			people.push_back(new person(atoi(e.details[2]), L, R, T, B, pink, 1000, e.details[0]));
+			bride = people.size()-1;
+		}
+		else
+		{
+			people.insert(people.begin()+insertPos, new person(atoi(e.details[2]), L, R, T, B, pink, 1000, e.details[0]));
+			bride = insertPos;
+		}
+	}
+	marriages.push_back(new marriage(e.date, people[groom], people[bride], 1000));
+}
 void setDivorce(events e){};
+int posToInsert(int date)
+{
+	int peopleCount=people.size();
+	person *tmp;
 
-
-//person numOfOccurrences(char *a, char c)
-//{
-//	int arrLen = strlen(a);
-//	int count=0;
-//	for(int i=0;i<arrLen;++i)
-//		if(a[i]==c)
-//			++count;
-//	return count;
-//}
+	if(date < people[0]->date)
+	{
+		return 0;
+	}
+	else
+	{
+		for(int i=1;i<peopleCount;++i)
+		{
+			if(date >= people[i-1]->date && date < people[i]->date)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
+}
 
 int numOfOccurrences(char *a, char c)
 {
@@ -644,8 +764,6 @@ void display()
 	glFlush();
     glutPostRedisplay();
 }
-
-
 void init()
 {
 	glClearColor(0,0,0,0);
