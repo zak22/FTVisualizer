@@ -20,9 +20,12 @@ THE SOFTWARE.
 
 ============================================================================
 
-To use this UI: 
+How to use this UI: 
 
-1) Add the events.
-	birthEvent: 
-             date 
+1) Add the events:
+	a) Choose one of the events that are in UI which are:
+		1) birth 2) Marriage 3)Divorce 4)Death 
+        b) After choosing one of these options and filling the blanks hit add, 
+           so they can be add in the editing box. 
+        
 2) Hit Draw.  
