@@ -1,5 +1,9 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_UseX64=n
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ------------
     Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
+	License can be found at https://github.com/zak22/FTVisualizer/wiki/License
 #ce ------------
 
 #include <GUIConstantsEx.au3>
