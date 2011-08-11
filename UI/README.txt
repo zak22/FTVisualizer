@@ -26,6 +26,12 @@ How to use this UI:
 	a) Choose one of the events that are in UI which are:
 		1) birth 2) Marriage 3)Divorce 4)Death 
         b) After choosing one of these options and filling the blanks hit add, 
-           so they can be add in the editing box. 
+           so they can be add in the editing box.
+
+        ** 1) Birth event if the father or the mother is not in the list 
+           leave it empty.
+
+        ** 2) Marriage event if the partner is not in the list then include 
+           his birthdate otherwise leave it empty   
         
 2) Hit Draw.  
