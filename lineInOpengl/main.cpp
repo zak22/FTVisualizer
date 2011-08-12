@@ -1,6 +1,8 @@
    /*
  * Copyright (C) 2011 by Zakaria Almatar, Husain Al-Matar, and Osamh Hamali
- *
+ * License can be found at https://github.com/zak22/FTVisualizer/wiki/License
+ * 
+ * 
  * example of making a line. 
  * I will apply this in the project later
  *
